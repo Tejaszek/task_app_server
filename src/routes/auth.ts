@@ -4,6 +4,7 @@ import { db } from '../db';
 import { NewUser, users } from '../db/schema';
 import { eq } from 'drizzle-orm';
 import bcryprtjs from "bcryptjs";
+import jwt from 'jsonwebtoken';
 
 const authRouther = Router();
 
@@ -65,7 +66,10 @@ authRouther.post("/login", async (req: Request<{}, {}, loginBody>, res: Response
             return;
         }
 
-        res.json(existingUser);
+      const token =  jwt.sign({id: existingUser.id},"passwordkey");
+
+
+        res.json({ token,...existingUser});
 
     } catch (error) {
         res.status(500).json({
